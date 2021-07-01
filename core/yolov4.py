@@ -289,7 +289,11 @@ def decode_trt(conv_output, output_size, NUM_CLASS, STRIDES, ANCHORS, i=0, XYSCA
     # return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
 
-def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constant([416,416])):
+def filter_boxes(box_xywh, scores, score_threshold=0.4):
+    """
+    Filters boxes that do not meet score threshold
+    
+    """
     scores_max = tf.math.reduce_max(scores, axis=-1)
 
     mask = scores_max >= score_threshold
@@ -298,12 +302,25 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constan
     class_boxes = tf.reshape(class_boxes, [tf.shape(scores)[0], -1, tf.shape(class_boxes)[-1]])
     pred_conf = tf.reshape(pred_conf, [tf.shape(scores)[0], -1, tf.shape(pred_conf)[-1]])
 
-    box_xy, box_wh = tf.split(class_boxes, (2, 2), axis=-1)
+    return class_boxes, pred_conf
+
+def convert_to_mins_maxes(box_xywh, input_shape = tf.constant([416,416])):
+    """
+    Converts boxes of yolo output that comes as (x_center, y_center, w, h) to (y_min, x_min, y_max, x_max).
+    tf.image.non_max_suppression https://www.tensorflow.org/api_docs/python/tf/image/non_max_suppression
+    or tf.image.combined_non_max_suppression https://www.tensorflow.org/api_docs/python/tf/image/combined_non_max_suppression
+
+    """
+    box_xy, box_wh = tf.split(box_xywh, (2, 2), axis=-1)
 
     input_shape = tf.cast(input_shape, dtype=tf.float32)
 
     box_yx = box_xy[..., ::-1]
     box_hw = box_wh[..., ::-1]
+    #box_yx = tf.reverse(box_xy, [2])
+    #box_hw = tf.reverse(box_wh, [2])
+    #box_yx = box_xy
+    #box_hw = box_wh
 
     box_mins = (box_yx - (box_hw / 2.)) / input_shape
     box_maxes = (box_yx + (box_hw / 2.)) / input_shape
@@ -313,9 +330,8 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape = tf.constan
         box_maxes[..., 0:1],  # y_max
         box_maxes[..., 1:2]  # x_max
     ], axis=-1)
-    # return tf.concat([boxes, pred_conf], axis=-1)
-    return (boxes, pred_conf)
 
+    return boxes
 
 def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
     conv_shape  = tf.shape(conv)
@@ -360,8 +376,3 @@ def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH,
     prob_loss = tf.reduce_mean(tf.reduce_sum(prob_loss, axis=[1,2,3,4]))
 
     return giou_loss, conf_loss, prob_loss
-
-
-
-
-

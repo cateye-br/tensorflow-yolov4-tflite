@@ -1,7 +1,7 @@
 import tensorflow as tf
 from absl import app, flags, logging
 from absl.flags import FLAGS
-from core.yolov4 import YOLO, decode, filter_boxes
+from core.yolov4 import YOLO, decode, filter_boxes, convert_to_mins_maxes
 import core.utils as utils
 from core.config import cfg
 
@@ -12,6 +12,9 @@ flags.DEFINE_integer('input_size', 416, 'define input size of export model')
 flags.DEFINE_float('score_thres', 0.2, 'define score threshold')
 flags.DEFINE_string('framework', 'tf', 'define what framework do you want to convert (tf, trt, tflite)')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
+flags.DEFINE_boolean('filter_boxes', False, 'filter boxes that do not meet confidence threshold')
+flags.DEFINE_boolean('nsm', False, 'perform combined non max supression on model output')
+flags.DEFINE_boolean('export_mins_maxes', False, 'return boxes as (y1,x1,y2,x2) instead of (x_center,y_center,w,h)')
 
 def save_tf():
   STRIDES, ANCHORS, NUM_CLASS, XYSCALE = utils.load_config(FLAGS)
@@ -43,8 +46,23 @@ def save_tf():
   if FLAGS.framework == 'tflite':
     pred = (pred_bbox, pred_prob)
   else:
-    boxes, pred_conf = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres, input_shape=tf.constant([FLAGS.input_size, FLAGS.input_size]))
-    pred = tf.concat([boxes, pred_conf], axis=-1)
+    if FLAGS.filter_boxes:
+      pred_bbox, pred_prob = filter_boxes(pred_bbox, pred_prob, score_threshold=FLAGS.score_thres)
+    
+    if FLAGS.nms or FLAGS.export_mins_maxes:
+      pred_bbox = convert_to_mins_maxes(pred_bbox)
+      if FLAGS.nms:
+        pred_bbox, pred_prob, classes, valid_detections = tf.image.combined_non_max_suppression(
+            boxes=pred_bbox,
+            scores=pred_prob,
+            max_output_size_per_class=50,
+            max_total_size=50,
+            iou_threshold=0.7,
+            score_threshold=0.8
+        )
+
+    pred = (pred_bbox, pred_prob)
+  
   model = tf.keras.Model(input_layer, pred)
   utils.load_weights(model, FLAGS.weights, FLAGS.model, FLAGS.tiny)
   model.summary()

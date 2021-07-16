@@ -13,7 +13,7 @@ flags.DEFINE_float('score_thres', 0.2, 'define score threshold')
 flags.DEFINE_string('framework', 'tf', 'define what framework do you want to convert (tf, trt, tflite)')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_boolean('filter_boxes', False, 'filter boxes that do not meet confidence threshold')
-flags.DEFINE_boolean('nsm', False, 'perform combined non max supression on model output')
+flags.DEFINE_boolean('nms', False, 'perform combined non max supression on model output')
 flags.DEFINE_boolean('export_mins_maxes', False, 'return boxes as (y1,x1,y2,x2) instead of (x_center,y_center,w,h)')
 
 def save_tf():

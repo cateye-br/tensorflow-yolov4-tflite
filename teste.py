@@ -23,10 +23,10 @@ class TensorflowYoloModel():
     def load_model(self):
         self.saved_model_loaded = tf.saved_model.load(self.model_path, tags=[tag_constants.SERVING])
         self.infer_func = self.saved_model_loaded.signatures['serving_default']
+        print("teste", self.infer_func)
 
     def infer(self, input):
         batch_data = tf.constant(input)
-        print(batch_data)
         pred_bbox = self.infer_func(batch_data)
         return pred_bbox
 

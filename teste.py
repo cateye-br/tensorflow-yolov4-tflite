@@ -26,6 +26,7 @@ class TensorflowYoloModel():
 
     def infer(self, input):
         batch_data = tf.constant(input)
+        print(batch_data)
         pred_bbox = self.infer_func(batch_data)
         return pred_bbox
 

@@ -144,7 +144,10 @@ def main(_argv):
     image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(image)
 
-    pred_bbox = model.infer(image)
+    images_data = [image]
+    images_data = np.asarray(images_data).astype(np.float32)
+
+    pred_bbox = model.infer(images_data)
 
     for key, value in pred_bbox.items():
         boxes = value[:, :, 0:4]

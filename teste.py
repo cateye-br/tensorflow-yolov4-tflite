@@ -143,6 +143,8 @@ def main(_argv):
     image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(image)
 
+    print(image)
+
     pred_bbox = model.infer(image)
 
     for key, value in pred_bbox.items():

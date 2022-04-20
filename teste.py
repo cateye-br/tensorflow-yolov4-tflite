@@ -159,7 +159,7 @@ def main(_argv):
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     bboxes = convert_to_mins_maxes(boxes)
 
-    print(bboxes)
+    print(pred_conf)
 
     picked_boxes, picked_score, picked_classes = non_max_suppression(bboxes, pred_conf)
 

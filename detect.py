@@ -69,6 +69,9 @@ def main(_argv):
             boxes = value[:, :, 0:4]
             pred_conf = value[:, :, 4:]
 
+
+    print(boxes, pred_conf)
+
     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
         boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
         scores=tf.reshape(
@@ -79,7 +82,6 @@ def main(_argv):
         score_threshold=FLAGS.score
     )
 
-    print(boxes, scores)
 
     pred_bbox = [boxes.numpy(), scores.numpy(), classes.numpy(), valid_detections.numpy()]
 

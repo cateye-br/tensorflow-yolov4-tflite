@@ -132,20 +132,20 @@ def non_max_suppression(bounding_boxes, class_scores, iou_threshold=0.7, scores_
         order = order[left]
     return picked_boxes, picked_score, picked_classes
 
-model = TensorflowYoloModel('./checkpoints/plates_mercosulbr_yolov4tiny_v1–416-tf')
 
+if __name__ == '__main__':
+    model = TensorflowYoloModel('./checkpoints/plates_mercosulbr_yolov4tiny_v1–416-tf')
 
-image_path = FLAGS.image
-image = cv2.imread(image_path)
-image = preprocess_img_obj(image)
+    image_path = FLAGS.image
+    image = cv2.imread(image_path)
+    image = preprocess_img_obj(image)
 
-pred_bbox = model.infer(image)
+    pred_bbox = model.infer(image)
 
-for key, value in pred_bbox.items():
-    boxes = value[:, :, 0:4]
-    pred_conf = value[:, :, 4:]
+    for key, value in pred_bbox.items():
+        boxes = value[:, :, 0:4]
+        pred_conf = value[:, :, 4:]
 
-print('\n\nTESTE')
-print(boxes, pred_conf)
-print('\n\nFIM TESTE')
-
+    print('\n\nTESTE')
+    print(boxes, pred_conf)
+    print('\n\nFIM TESTE')

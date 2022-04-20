@@ -64,6 +64,9 @@ def main(_argv):
         infer = saved_model_loaded.signatures['serving_default']
         batch_data = tf.constant(images_data)
         pred_bbox = infer(batch_data)
+
+        print('\n\nteste: ', pred_bbox, '\n\n')
+
         for key, value in pred_bbox.items():
             boxes = value[:, :, 0:4]
             pred_conf = value[:, :, 4:]

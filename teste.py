@@ -31,7 +31,7 @@ class TensorflowYoloModel():
 
 
 def preprocess_img_obj(img):
-    img = cv2.resize(img, (416, 416))
+    img = cv2.resize(img, (FLAGS.size, FLAGS.size))
     img = img.astype(np.float32)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     image_data = img / 255
@@ -134,10 +134,13 @@ def non_max_suppression(bounding_boxes, class_scores, iou_threshold=0.7, scores_
 
 
 def main(_argv):
-    model = TensorflowYoloModel('./checkpoints/plates_mercosulbr_yolov4tiny_v1–416-tf')
+    print(FLAGS.weights)
+    print(FLAGS.size)
+    print(FLAGS.image)
 
-    image_path = FLAGS.image
-    image = cv2.imread(image_path)
+    model = TensorflowYoloModel(FLAGS.weights)
+
+    image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(image)
 
     pred_bbox = model.infer(image)

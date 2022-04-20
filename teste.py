@@ -23,7 +23,6 @@ class TensorflowYoloModel():
     def load_model(self):
         self.saved_model_loaded = tf.saved_model.load(self.model_path, tags=[tag_constants.SERVING])
         self.infer_func = self.saved_model_loaded.signatures['serving_default']
-        print("teste", self.infer_func)
 
     def infer(self, input):
         batch_data = tf.constant(input)
@@ -140,6 +139,7 @@ def main(_argv):
     print(FLAGS.image)
 
     model = TensorflowYoloModel(FLAGS.weights)
+    model.load_model()
 
     image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(image)

@@ -133,7 +133,7 @@ def non_max_suppression(bounding_boxes, class_scores, iou_threshold=0.7, scores_
     return picked_boxes, picked_score, picked_classes
 
 
-if __name__ == '__main__':
+def main(_argv):
     model = TensorflowYoloModel('./checkpoints/plates_mercosulbr_yolov4tiny_v1–416-tf')
 
     image_path = FLAGS.image
@@ -149,3 +149,11 @@ if __name__ == '__main__':
     print('\n\nTESTE')
     print(boxes, pred_conf)
     print('\n\nFIM TESTE')
+
+
+if __name__ == '__main__':
+    try:
+        app.run(main)
+    except SystemExit:
+        pass
+

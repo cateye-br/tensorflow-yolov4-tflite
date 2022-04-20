@@ -156,14 +156,16 @@ def main(_argv):
         boxes = value[:, :, 0:4]
         pred_conf = value[:, :, 4:]
 
+    boxes = tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))
+    scores = tf.reshape(
+        pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))
+
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     bboxes = convert_to_mins_maxes(boxes)
 
-    print(pred_conf)
+    picked_boxes, picked_score, picked_classes = non_max_suppression(bboxes, scores)
 
-    picked_boxes, picked_score, picked_classes = non_max_suppression(bboxes, pred_conf)
-
-    print("FINAL BOXES", bboxes)
+    print("FINAL BOXES", picked_boxes, picked_score, picked_classes)
 
     num_classes = 4
     image_h, image_w, _ = image.shape

@@ -156,6 +156,11 @@ def main(_argv):
         boxes = value[:, :, 0:4]
         pred_conf = value[:, :, 4:]
 
+
+    print(boxes.shape)
+    print(pred_conf.shape)
+    
+
     boxes = tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))
     scores = tf.reshape(
         pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))

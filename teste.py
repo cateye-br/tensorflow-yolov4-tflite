@@ -153,42 +153,51 @@ def main(_argv):
 
     output = model.infer(images_data)
 
-    boxes = output[0]
-    confs = output[1]
-  
+    print(output)
+
+    boxes = []
+    confs = []
+    for key, value in output.items():
+        boxes = value[:, :, 0:4]
+        confs = value[:, :, 4:]
+
+
+    print(boxes.shape)
+    print(confs.shape)
+    
+    print("INFER", boxes, confs)
         
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     # bboxes = convert_to_mins_maxes(boxes)
-    print("shapes", boxes.shape, confs.shape)
-    print("NMS BOXES", boxes, confs)
+
 
     # picked_boxes, picked_score, picked_classes = non_max_suppression(boxes, scores)
 
     # print("FINAL BOXES", picked_boxes, picked_score, picked_classes)
 
-    num_classes = 4
-    image_h, image_w, _ = image.shape
+    # num_classes = 4
+    # image_h, image_w, _ = image.shape
 
-    hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
-    colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
-    colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
+    # hsv_tuples = [(1.0 * x / num_classes, 1., 1.) for x in range(num_classes)]
+    # colors = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv_tuples))
+    # colors = list(map(lambda x: (int(x[0] * 255), int(x[1] * 255), int(x[2] * 255)), colors))
 
-    for i in range(picked_boxes):
-        fontScale = 0.5
-        score = picked_score[0][i]
-        class_ind = int(picked_classes[0][i])
-        bbox_color = colors[class_ind]
-        bbox_thick = int(0.6 * (image_h + image_w) / 600)
-        c1, c2 = (picked_boxes[1], picked_boxes[0]), (picked_boxes[3], picked_boxes[2])
-        cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
+    # for i in range(picked_boxes):
+    #     fontScale = 0.5
+    #     score = picked_score[0][i]
+    #     class_ind = int(picked_classes[0][i])
+    #     bbox_color = colors[class_ind]
+    #     bbox_thick = int(0.6 * (image_h + image_w) / 600)
+    #     c1, c2 = (picked_boxes[1], picked_boxes[0]), (picked_boxes[3], picked_boxes[2])
+    #     cv2.rectangle(image, c1, c2, bbox_color, bbox_thick)
 
-        bbox_mess = '%s: %.2f' % (picked_classes[class_ind], score)
-        t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
-        c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)
-        cv2.rectangle(image, c1, (np.float32(c3[0]), np.float32(c3[1])), bbox_color, -1) #filled
+    #     bbox_mess = '%s: %.2f' % (picked_classes[class_ind], score)
+    #     t_size = cv2.getTextSize(bbox_mess, 0, fontScale, thickness=bbox_thick // 2)[0]
+    #     c3 = (c1[0] + t_size[0], c1[1] - t_size[1] - 3)
+    #     cv2.rectangle(image, c1, (np.float32(c3[0]), np.float32(c3[1])), bbox_color, -1) #filled
 
-        cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
+    #     cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
+    #                 fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
 
 
 if __name__ == '__main__':

@@ -151,32 +151,16 @@ def main(_argv):
     images_data = [image]
     images_data = np.asarray(images_data).astype(np.float32)
 
-    pred_bbox = model.infer(images_data)
+    output = model.infer(images_data)
 
-    boxes = []
-    pred_conf = []
-    for key, value in pred_bbox.items():
-        boxes = value[:, :, 0:4]
-        pred_conf = value[:, :, 4:]
-
-
-    print(boxes.shape)
-    print(pred_conf.shape)
-    
-    boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
-            boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-            scores=tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            max_output_size_per_class=50,
-            max_total_size=50,
-            iou_threshold=FLAGS.iou,
-            score_threshold=FLAGS.score
-        )
+    boxes = output[0]
+    confs = output[1]
+  
         
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     # bboxes = convert_to_mins_maxes(boxes)
-
-    print("NMS BOXES", boxes, scores, classes, valid_detections)
+    print("shapes", boxes.shape, confs.shape)
+    print("NMS BOXES", boxes, confs)
 
     # picked_boxes, picked_score, picked_classes = non_max_suppression(boxes, scores)
 

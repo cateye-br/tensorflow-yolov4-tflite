@@ -165,6 +165,10 @@ def main(_argv):
     scores = tf.reshape(
         pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))
 
+
+    print(boxes.shape)
+    print(scores.shape)
+
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     bboxes = convert_to_mins_maxes(boxes)
 

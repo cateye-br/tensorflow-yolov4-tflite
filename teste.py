@@ -150,6 +150,8 @@ def main(_argv):
 
     pred_bbox = model.infer(images_data)
 
+    print(pred_bbox.shape)
+
     boxes = []
     pred_conf = []
     for key, value in pred_bbox.items():

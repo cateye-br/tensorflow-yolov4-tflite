@@ -13,6 +13,9 @@ flags.DEFINE_boolean('tiny', False, 'yolo or yolo-tiny')
 flags.DEFINE_string('model', 'yolov4', 'yolov3 or yolov4')
 flags.DEFINE_string('image', './data/kite.jpg', 'path to input image')
 
+flags.DEFINE_float('iou', 0.45, 'iou threshold')
+flags.DEFINE_float('score', 0.25, 'score threshold')
+
 
 class TensorflowYoloModel():
     def __init__(self, model_path):
@@ -150,8 +153,6 @@ def main(_argv):
 
     pred_bbox = model.infer(images_data)
 
-    print(pred_bbox.shape)
-
     boxes = []
     pred_conf = []
     for key, value in pred_bbox.items():
@@ -162,23 +163,24 @@ def main(_argv):
     print(boxes.shape)
     print(pred_conf.shape)
     
-
-    boxes = tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))
-    scores = tf.reshape(
-        pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1]))
-
-
-    print(boxes.shape)
-    print(scores.shape)
-
+    boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
+            boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
+            scores=tf.reshape(
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+            max_output_size_per_class=50,
+            max_total_size=50,
+            iou_threshold=FLAGS.iou,
+            score_threshold=FLAGS.score
+        )
+        
     #boxes x,y,w,h para boxes x1,y1,x2,y2
-    bboxes = convert_to_mins_maxes(boxes)
+    # bboxes = convert_to_mins_maxes(boxes)
 
-    print("MIN MAX BOXES", bboxes[0])
+    print("NMS BOXES", boxes, scores, classes, valid_detections)
 
-    picked_boxes, picked_score, picked_classes = non_max_suppression(bboxes, scores)
+    # picked_boxes, picked_score, picked_classes = non_max_suppression(boxes, scores)
 
-    print("FINAL BOXES", picked_boxes, picked_score, picked_classes)
+    # print("FINAL BOXES", picked_boxes, picked_score, picked_classes)
 
     num_classes = 4
     image_h, image_w, _ = image.shape

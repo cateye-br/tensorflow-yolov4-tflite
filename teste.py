@@ -148,17 +148,15 @@ def main(_argv):
     original_image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(original_image)
 
-    cv2.imwrite('teste1_original.jpg', original_image)
-    cv2.imwrite('teste1_preprocess.jpg', cv2.cvtColor(np.array(image*255), cv2.COLOR_BGR2RGB))
+    # cv2.imwrite('teste1_original.jpg', original_image)
+    # cv2.imwrite('teste1_preprocess.jpg', cv2.cvtColor(np.array(image*255), cv2.COLOR_BGR2RGB))
 
     images_data = [image]
     images_data = np.asarray(images_data).astype(np.float32)
 
     result = model.infer(images_data)
 
-
-
-    print(result)
+    print(result.shape)
 
     pred_bbox = []
     for key, value in result.items():

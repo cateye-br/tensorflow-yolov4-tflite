@@ -151,9 +151,14 @@ def main(_argv):
     images_data = [image]
     images_data = np.asarray(images_data).astype(np.float32)
 
-    output = model.infer(images_data)
+    result = model.infer(images_data)
 
-    print(output)
+    print(result)
+
+    pred_bbox = []
+    for key, value in result.items():
+        value = value.numpy()
+        pred_bbox.append(value)
 
     pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
     pred_bbox = tf.concat(pred_bbox, axis=0)

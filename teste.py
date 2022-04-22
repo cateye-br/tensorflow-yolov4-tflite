@@ -156,9 +156,11 @@ def main(_argv):
 
     result = model.infer(images_data)
 
+    print("RESULT", result)
+
     for key, value in result.items():
         boxes = value[:, :, 0:4]
-        pred_conf = value[:, :, 4:]
+        pred_conf = value[:, :, :]
 
     print("BOXES", boxes)
     print("CONF", pred_conf)

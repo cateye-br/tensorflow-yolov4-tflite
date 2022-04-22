@@ -162,9 +162,8 @@ def main(_argv):
         boxes = value[:, :, 0:4]
         scores = value[:, :, 4:]
 
-    boxes = tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4))
-    scores = tf.reshape(
-        scores, (tf.shape(scores)[0], -1, tf.shape(scores)[-1]))
+    boxes = tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)).numpy()
+    scores = tf.reshape(scores, (tf.shape(scores)[0], -1, tf.shape(scores)[-1])).numpy()
 
     picked_boxes, picked_score, picked_classes = non_max_suppression(boxes, scores)
 

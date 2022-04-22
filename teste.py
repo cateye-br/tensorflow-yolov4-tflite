@@ -149,7 +149,7 @@ def main(_argv):
     image = preprocess_img_obj(original_image)
 
     cv2.imwrite('teste1_original.jpg', original_image)
-    cv2.imwrite('teste1_preprocess.jpg', image)
+    cv2.imwrite('teste1_preprocess.jpg', cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB))
 
     images_data = [image]
     images_data = np.asarray(images_data).astype(np.float32)

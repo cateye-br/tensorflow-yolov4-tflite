@@ -163,7 +163,15 @@ def main(_argv):
     pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
     pred_bbox = tf.concat(pred_bbox, axis=0)
 
-    print(pred_bbox.shape)
+    pred_bbox = np.array(pred_bbox)
+
+    pred_xywh = pred_bbox[:, 0:4]
+    pred_conf = pred_bbox[:, 4]
+    pred_prob = pred_bbox[:, 5:]
+
+    print(pred_xywh.shape)
+    print(pred_conf.shape)
+    print(pred_prob.shape)
     
     print("INFER", pred_bbox)
         

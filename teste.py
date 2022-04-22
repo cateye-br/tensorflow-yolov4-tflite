@@ -156,10 +156,10 @@ def main(_argv):
 
     result = model.infer(images_data)
 
-    print(result.shape)
-
     pred_bbox = []
     for key, value in result.items():
+        print(key)
+        print(value)
         value = value.numpy()
         pred_bbox.append(value)
 

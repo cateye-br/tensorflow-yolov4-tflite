@@ -166,6 +166,7 @@ def main(_argv):
 
     print("FINAL BOXES", picked_boxes, picked_score, picked_classes)
 
+    image = original_image
     num_classes = 4
     image_h, image_w, _ = image.shape
 
@@ -190,6 +191,7 @@ def main(_argv):
         cv2.putText(image, bbox_mess, (c1[0], np.float32(c1[1] - 2)), cv2.FONT_HERSHEY_SIMPLEX,
                     fontScale, (0, 0, 0), bbox_thick // 2, lineType=cv2.LINE_AA)
 
+    cv2.imwrite('result.png', cv2.cvtColor(np.array(image*255), cv2.COLOR_BGR2RGB))
 
 if __name__ == '__main__':
     try:

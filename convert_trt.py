@@ -24,8 +24,7 @@ def convert_to_tensorflow_trt(tf_model_path, output_model_path, optimize_offline
     conversion_params = trt.DEFAULT_TRT_CONVERSION_PARAMS._replace(
         precision_mode=precision_mode,
         # set trt workspace size to 4GB
-        max_workspace_size_bytes=1 << 32,
-        max_batch_size=1)
+        max_workspace_size_bytes=1 << 32)
     converter = trt.TrtGraphConverterV2(
         input_saved_model_dir=tf_model_path, conversion_params=conversion_params)
     converter._enable_ = True

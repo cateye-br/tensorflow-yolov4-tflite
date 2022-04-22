@@ -147,11 +147,13 @@ def main(_argv):
 
     original_image = cv2.imread(FLAGS.image)
     image = preprocess_img_obj(original_image)
+    #
+    # images_data = [image]
+    # images_data = np.asarray(images_data).astype(np.float32)
 
-    images_data = [image]
-    images_data = np.asarray(images_data).astype(np.float32)
+    result = model.infer(image)
 
-    result = model.infer(images_data)
+
 
     print(result)
 

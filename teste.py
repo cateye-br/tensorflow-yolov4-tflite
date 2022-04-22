@@ -156,27 +156,32 @@ def main(_argv):
 
     result = model.infer(images_data)
 
-    pred_bbox = []
     for key, value in result.items():
-        print(key)
-        print(value)
-        value = value.numpy()
-        pred_bbox.append(value)
+        boxes = value[:, :, 0:4]
+        pred_conf = value[:, :, 4:]
 
-    pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
-    pred_bbox = tf.concat(pred_bbox, axis=0)
+    print("BOXES", boxes)
+    print("CONF", pred_conf)
 
-    pred_bbox = np.array(pred_bbox)
-
-    pred_xywh = pred_bbox[:, 0:4]
-    pred_conf = pred_bbox[:, 4]
-    pred_prob = pred_bbox[:, 5:]
-
-    print(pred_xywh.shape)
-    print(pred_conf.shape)
-    print(pred_prob.shape)
-    
-    print("INFER", pred_bbox)
+    # pred_bbox = []
+    # for key, value in result.items():
+    #     value = value.numpy()
+    #     pred_bbox.append(value)
+    #
+    # pred_bbox = [tf.reshape(x, (-1, tf.shape(x)[-1])) for x in pred_bbox]
+    # pred_bbox = tf.concat(pred_bbox, axis=0)
+    #
+    # pred_bbox = np.array(pred_bbox)
+    #
+    # pred_xywh = pred_bbox[:, 0:4]
+    # pred_conf = pred_bbox[:, 4]
+    # pred_prob = pred_bbox[:, 5:]
+    #
+    # print(pred_xywh.shape)
+    # print(pred_conf.shape)
+    # print(pred_prob.shape)
+    #
+    # print("INFER", pred_bbox)
         
     #boxes x,y,w,h para boxes x1,y1,x2,y2
     # bboxes = convert_to_mins_maxes(boxes)

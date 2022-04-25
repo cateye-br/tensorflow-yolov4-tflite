@@ -65,6 +65,9 @@ def main(_argv):
         batch_data = tf.constant(images_data)
         pred_bbox = infer(batch_data)
 
+        print("OUTPUT", pred_bbox)
+        print("OUTPUT_SHPAE", pred_bbox.shape)
+
         for key, value in pred_bbox.items():
             boxes = value[:, :, 0:4]
             pred_conf = value[:, :, 4:]

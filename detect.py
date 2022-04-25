@@ -62,11 +62,13 @@ def main(_argv):
     else:
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         infer = saved_model_loaded.signatures['serving_default']
+        
+        print("signatures", infer)
+
         batch_data = tf.constant(images_data)
         pred_bbox = infer(batch_data)
 
         print("OUTPUT", pred_bbox)
-        print("OUTPUT_SHPAE", pred_bbox.shape)
 
         for key, value in pred_bbox.items():
             boxes = value[:, :, 0:4]

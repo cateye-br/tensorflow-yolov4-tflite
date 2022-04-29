@@ -62,7 +62,7 @@ def main(_argv):
     else:
         saved_model_loaded = tf.saved_model.load(FLAGS.weights, tags=[tag_constants.SERVING])
         infer = saved_model_loaded.signatures['serving_default']
-        
+
         print("signatures", infer)
 
         batch_data = tf.constant(images_data)
